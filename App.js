@@ -8,6 +8,7 @@ import ResultsScreen from "./screens/ResultsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import LeaderboardScreen from "./screens/LeaderboardScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import OnboardingScreen from "./screens/OnboardingScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Landing" component={LandingScreen} />
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Submission" component={SubmissionScreen} />
         <Stack.Screen name="Results" component={ResultsScreen} />
