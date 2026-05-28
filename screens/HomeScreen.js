@@ -175,7 +175,6 @@ function VoteView() {
         {SUBMISSIONS.map((entry) => {
           const isVoted = voted.has(entry.id);
           const isDisabled = outOfVotes && !isVoted;
-          const displayVotes = entry.baseVotes + (isVoted ? 1 : 0);
 
           return (
             <View key={entry.id} style={s.card}>
@@ -196,7 +195,7 @@ function VoteView() {
                     <Text style={s.fireButtonTextDisabled}>no votes left</Text>
                   ) : (
                     <Text style={[s.fireButtonText, isVoted && s.fireButtonTextVoted]}>
-                      {displayVotes}{"  "}🔥
+                      🔥
                     </Text>
                   )}
                 </TouchableOpacity>
