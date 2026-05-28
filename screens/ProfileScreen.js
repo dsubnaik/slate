@@ -7,10 +7,11 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useTheme } from "../context/ThemeContext";
 import BottomNav from "../components/BottomNav";
+import EmptyState from "../components/EmptyState";
 
 const USERNAME = "Hidden Bear";
-
 const STATS = { streak: 7, wins: 3, winRate: 43 };
 
 const HISTORY = [
@@ -23,7 +24,7 @@ const HISTORY = [
   { id: "7", challenge: "Empty Streets",   date: "May 21",  votes: 28, won: false },
 ];
 
-function StatCell({ value, label, borderRight }) {
+function StatCell({ value, label, borderRight, s }) {
   return (
     <View style={[s.statCell, borderRight && s.statCellBorder]}>
       <Text style={s.statValue}>{value}</Text>
@@ -33,15 +34,21 @@ function StatCell({ value, label, borderRight }) {
 }
 
 export default function ProfileScreen({ navigation }) {
+  const { theme } = useTheme();
+  const s = makeStyles(theme);
+
   return (
     <SafeAreaView style={s.container}>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.statusBar} />
 
       <View style={s.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
           <Text style={s.backButton}>← back</Text>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate("Settings")}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate("Settings")}
+        >
           <Text style={s.gearIcon}>⚙</Text>
         </TouchableOpacity>
       </View>
@@ -51,7 +58,6 @@ export default function ProfileScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        {/* Identity */}
         <View style={s.identitySection}>
           <View style={s.usernameRow}>
             <Text style={s.username}>{USERNAME}</Text>
@@ -62,15 +68,19 @@ export default function ProfileScreen({ navigation }) {
           <Text style={s.identityLabel}>your anonymous identity</Text>
         </View>
 
-        {/* Stats */}
         <View style={s.statsRow}>
-          <StatCell value={`🔥 ${STATS.streak}`} label="day streak"  borderRight />
-          <StatCell value={`🏆 ${STATS.wins}`}   label="total wins"  borderRight />
-          <StatCell value={`${STATS.winRate}%`}   label="win rate"               />
+          <StatCell value={`🔥 ${STATS.streak}`} label="day streak"  borderRight s={s} />
+          <StatCell value={`🏆 ${STATS.wins}`}   label="total wins"  borderRight s={s} />
+          <StatCell value={`${STATS.winRate}%`}   label="win rate"               s={s} />
         </View>
 
-        {/* History */}
         <Text style={s.sectionEyebrow}>past submissions</Text>
+        {HISTORY.length === 0 ? (
+          <EmptyState
+            title="no submissions yet"
+            subtitle={"enter a challenge to start" + "\n" + "building your history"}
+          />
+        ) : (
         <View style={s.historyList}>
           {HISTORY.map((item) => (
             <View key={item.id} style={s.historyRow}>
@@ -85,152 +95,153 @@ export default function ProfileScreen({ navigation }) {
             </View>
           ))}
         </View>
+        )}
       </ScrollView>
       <BottomNav navigation={navigation} active="profile" />
     </SafeAreaView>
   );
 }
 
-const s = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 32,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  backButton: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 0.5,
-  },
-  gearIcon: {
-    fontSize: 22,
-    color: "#000",
-  },
-  scrollFlex: {
-    flex: 1,
-  },
-  scroll: {
-    paddingHorizontal: 32,
-    paddingTop: 20,
-    paddingBottom: 32,
-  },
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.bg,
+    },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 32,
+      paddingTop: 16,
+      paddingBottom: 8,
+    },
+    backButton: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 0.5,
+    },
+    gearIcon: {
+      fontSize: 22,
+      color: theme.text,
+    },
+    scrollFlex: {
+      flex: 1,
+    },
+    scroll: {
+      paddingHorizontal: 32,
+      paddingTop: 20,
+      paddingBottom: 32,
+    },
 
-  // Identity
-  identitySection: {
-    marginBottom: 32,
-  },
-  usernameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 6,
-  },
-  username: {
-    fontSize: 34,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -1.5,
-  },
-  editBtn: {
-    paddingTop: 4,
-  },
-  editIcon: {
-    fontSize: 18,
-    color: "#888",
-  },
-  identityLabel: {
-    fontSize: 11,
-    fontWeight: "400",
-    color: "#888",
-    letterSpacing: 2.5,
-    textTransform: "uppercase",
-  },
+    identitySection: {
+      marginBottom: 32,
+    },
+    usernameRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 6,
+    },
+    username: {
+      fontSize: 34,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -1.5,
+    },
+    editBtn: {
+      paddingTop: 4,
+    },
+    editIcon: {
+      fontSize: 18,
+      color: theme.textMuted,
+    },
+    identityLabel: {
+      fontSize: 11,
+      fontWeight: "400",
+      color: theme.textMuted,
+      letterSpacing: 2.5,
+      textTransform: "uppercase",
+    },
 
-  // Stats
-  statsRow: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    borderRadius: 6,
-    overflow: "hidden",
-    marginBottom: 44,
-  },
-  statCell: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 18,
-    gap: 4,
-  },
-  statCellBorder: {
-    borderRightWidth: 1,
-    borderRightColor: "#e8e8e8",
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#000",
-    letterSpacing: -0.5,
-  },
-  statLabel: {
-    fontSize: 10,
-    fontWeight: "400",
-    color: "#888",
-    letterSpacing: 1.5,
-    textTransform: "uppercase",
-  },
+    statsRow: {
+      flexDirection: "row",
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 6,
+      overflow: "hidden",
+      marginBottom: 44,
+    },
+    statCell: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 18,
+      gap: 4,
+      backgroundColor: theme.bg,
+    },
+    statCellBorder: {
+      borderRightWidth: 1,
+      borderRightColor: theme.border,
+    },
+    statValue: {
+      fontSize: 20,
+      fontWeight: "800",
+      color: theme.text,
+      letterSpacing: -0.5,
+    },
+    statLabel: {
+      fontSize: 10,
+      fontWeight: "400",
+      color: theme.textMuted,
+      letterSpacing: 1.5,
+      textTransform: "uppercase",
+    },
 
-  // History
-  sectionEyebrow: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 3,
-    textTransform: "uppercase",
-    marginBottom: 16,
-  },
-  historyList: {},
-  historyRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-    gap: 14,
-  },
-  thumb: {
-    width: 52,
-    height: 52,
-    borderRadius: 4,
-    backgroundColor: "#f2f2f2",
-  },
-  historyMid: {
-    flex: 1,
-    gap: 4,
-  },
-  challengeName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#000",
-    letterSpacing: 0.1,
-  },
-  historyDate: {
-    fontSize: 12,
-    fontWeight: "400",
-    color: "#888",
-    letterSpacing: 0.5,
-  },
-  historyVotes: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 0.3,
-  },
-});
+    sectionEyebrow: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 3,
+      textTransform: "uppercase",
+      marginBottom: 16,
+    },
+    historyList: {},
+    historyRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.divider,
+      gap: 14,
+    },
+    thumb: {
+      width: 52,
+      height: 52,
+      borderRadius: 4,
+      backgroundColor: theme.surface,
+    },
+    historyMid: {
+      flex: 1,
+      gap: 4,
+    },
+    challengeName: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.text,
+      letterSpacing: 0.1,
+    },
+    historyDate: {
+      fontSize: 12,
+      fontWeight: "400",
+      color: theme.textMuted,
+      letterSpacing: 0.5,
+    },
+    historyVotes: {
+      fontSize: 13,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 0.3,
+    },
+  });
+}

@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 import { Text, View, StyleSheet, Animated } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useTheme } from "../context/ThemeContext";
 
 export default function SplashScreen({ navigation }) {
+  const { theme } = useTheme();
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -13,8 +16,11 @@ export default function SplashScreen({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Animated.Text style={[styles.logo, { opacity }]}>slate</Animated.Text>
+    <View style={[styles.container, { backgroundColor: theme.bg }]}>
+      <StatusBar style={theme.statusBar} />
+      <Animated.Text style={[styles.logo, { opacity, color: theme.text }]}>
+        slate
+      </Animated.Text>
     </View>
   );
 }
@@ -22,14 +28,12 @@ export default function SplashScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
   },
   logo: {
     fontSize: 80,
     fontWeight: "900",
-    color: "#000",
     letterSpacing: -3,
   },
 });

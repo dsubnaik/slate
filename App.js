@@ -1,4 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
+import { ThemeProvider } from "./context/ThemeContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "./screens/SplashScreen";
 import LandingScreen from "./screens/LandingScreen";
@@ -14,6 +15,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    <ThemeProvider>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Splash" component={SplashScreen} />
@@ -27,5 +29,6 @@ export default function App() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </ThemeProvider>
   );
 }

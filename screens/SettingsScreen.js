@@ -10,16 +10,17 @@ import {
   Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useTheme } from "../context/ThemeContext";
 
 const REMINDER_TIMES = ["5:00 AM", "6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM"];
 
-function SectionLabel({ title, danger }) {
+function SectionLabel({ title, danger, s }) {
   return (
     <Text style={[s.sectionLabel, danger && s.sectionLabelDanger]}>{title}</Text>
   );
 }
 
-function SettingsRow({ label, value, onPress, rightLabel, danger, first }) {
+function SettingsRow({ label, value, onPress, rightLabel, danger, first, s }) {
   return (
     <TouchableOpacity
       style={[s.row, !first && s.rowBorder]}
@@ -36,23 +37,25 @@ function SettingsRow({ label, value, onPress, rightLabel, danger, first }) {
   );
 }
 
-function ToggleRow({ label, value, onChange, first }) {
+function ToggleRow({ label, value, onChange, first, s, theme }) {
   return (
     <View style={[s.row, !first && s.rowBorder]}>
       <Text style={s.rowLabel}>{label}</Text>
       <Switch
         value={value}
         onValueChange={onChange}
-        trackColor={{ false: "#e0e0e0", true: "#000" }}
-        thumbColor="#fff"
-        ios_backgroundColor="#e0e0e0"
+        trackColor={{ false: theme.switchTrackOff, true: theme.accent }}
+        thumbColor={theme.bg}
+        ios_backgroundColor={theme.switchTrackOff}
       />
     </View>
   );
 }
 
 export default function SettingsScreen({ navigation }) {
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, isDark, toggleTheme } = useTheme();
+  const s = makeStyles(theme);
+
   const [pushNotifs, setPushNotifs] = useState(true);
   const [dailyReminder, setDailyReminder] = useState(true);
   const [reminderTime, setReminderTime] = useState("6:00 AM");
@@ -96,7 +99,7 @@ export default function SettingsScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.container}>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.statusBar} />
 
       <View style={s.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
@@ -114,43 +117,52 @@ export default function SettingsScreen({ navigation }) {
         contentContainerStyle={s.scroll}
       >
         {/* Account */}
-        <SectionLabel title="account" />
+        <SectionLabel title="account" s={s} />
         <View style={s.section}>
           <SettingsRow
             first
             label="Hidden Bear"
             value={<Text style={s.editLink}>Edit</Text>}
             onPress={handleEditUsername}
+            s={s}
           />
           <SettingsRow
             label="Change Password"
             rightLabel="→"
             onPress={handleChangePassword}
+            s={s}
           />
           <SettingsRow
             label="derricksubnaik@gmail.com"
             value={<Text style={s.lockedValue}>linked</Text>}
+            s={s}
           />
         </View>
 
         {/* Preferences */}
-        <SectionLabel title="preferences" />
+        <SectionLabel title="preferences" s={s} />
         <View style={s.section}>
           <ToggleRow
             first
             label="Dark Mode"
-            value={darkMode}
-            onChange={setDarkMode}
+            value={isDark}
+            onChange={toggleTheme}
+            s={s}
+            theme={theme}
           />
           <ToggleRow
             label="Push Notifications"
             value={pushNotifs}
             onChange={setPushNotifs}
+            s={s}
+            theme={theme}
           />
           <ToggleRow
             label="Daily Challenge Reminder"
             value={dailyReminder}
             onChange={setDailyReminder}
+            s={s}
+            theme={theme}
           />
           {dailyReminder && (
             <TouchableOpacity
@@ -168,18 +180,20 @@ export default function SettingsScreen({ navigation }) {
         </View>
 
         {/* Danger Zone */}
-        <SectionLabel title="danger zone" danger />
+        <SectionLabel title="danger zone" danger s={s} />
         <View style={s.section}>
           <SettingsRow
             first
             label="Log Out"
             danger
             onPress={handleLogOut}
+            s={s}
           />
           <SettingsRow
             label="Delete Account"
             danger
             onPress={handleDeleteAccount}
+            s={s}
           />
         </View>
 
@@ -189,132 +203,130 @@ export default function SettingsScreen({ navigation }) {
   );
 }
 
-const s = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  topBar: {
-    paddingHorizontal: 32,
-    paddingTop: 16,
-    paddingBottom: 4,
-  },
-  backButton: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 0.5,
-  },
-  titleSection: {
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  pageTitle: {
-    fontSize: 48,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -2,
-  },
-  scrollFlex: {
-    flex: 1,
-  },
-  scroll: {
-    paddingHorizontal: 32,
-    paddingBottom: 32,
-  },
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.bg,
+    },
+    topBar: {
+      paddingHorizontal: 32,
+      paddingTop: 16,
+      paddingBottom: 4,
+    },
+    backButton: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 0.5,
+    },
+    titleSection: {
+      paddingHorizontal: 32,
+      paddingTop: 10,
+      paddingBottom: 20,
+    },
+    pageTitle: {
+      fontSize: 48,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -2,
+    },
+    scrollFlex: {
+      flex: 1,
+    },
+    scroll: {
+      paddingHorizontal: 32,
+      paddingBottom: 32,
+    },
 
-  // Section label
-  sectionLabel: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 3,
-    textTransform: "uppercase",
-    marginBottom: 10,
-    marginTop: 28,
-  },
-  sectionLabelDanger: {
-    color: "#cc0000",
-  },
+    sectionLabel: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 3,
+      textTransform: "uppercase",
+      marginBottom: 10,
+      marginTop: 28,
+    },
+    sectionLabelDanger: {
+      color: "#cc0000",
+    },
 
-  // Section card
-  section: {
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    borderRadius: 6,
-    overflow: "hidden",
-  },
+    section: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 6,
+      overflow: "hidden",
+    },
 
-  // Row
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-    backgroundColor: "#fff",
-  },
-  rowBorder: {
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-  },
-  rowLabel: {
-    fontSize: 15,
-    fontWeight: "400",
-    color: "#000",
-    flex: 1,
-  },
-  rowLabelDanger: {
-    color: "#cc0000",
-    fontWeight: "500",
-  },
-  rowRight: {
-    fontSize: 15,
-    color: "#aaa",
-  },
-  editLink: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#888",
-    letterSpacing: 0.3,
-  },
-  lockedValue: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#bbb",
-    letterSpacing: 1.5,
-    textTransform: "uppercase",
-  },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 16,
+      paddingVertical: 15,
+      backgroundColor: theme.bg,
+    },
+    rowBorder: {
+      borderTopWidth: 1,
+      borderTopColor: theme.divider,
+    },
+    rowLabel: {
+      fontSize: 15,
+      fontWeight: "400",
+      color: theme.text,
+      flex: 1,
+    },
+    rowLabelDanger: {
+      color: "#cc0000",
+      fontWeight: "500",
+    },
+    rowRight: {
+      fontSize: 15,
+      color: theme.textDim,
+    },
+    editLink: {
+      fontSize: 13,
+      fontWeight: "500",
+      color: theme.textMuted,
+      letterSpacing: 0.3,
+    },
+    lockedValue: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: theme.textDim,
+      letterSpacing: 1.5,
+      textTransform: "uppercase",
+    },
 
-  // Sub-row (reminder time picker)
-  subRow: {
-    backgroundColor: "#fafafa",
-    paddingLeft: 32,
-  },
-  subRowLabel: {
-    fontSize: 14,
-    fontWeight: "400",
-    color: "#555",
-    flex: 1,
-  },
-  subRowRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  subRowValue: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-  },
-  subRowChevron: {
-    fontSize: 18,
-    color: "#aaa",
-    lineHeight: 20,
-  },
+    subRow: {
+      backgroundColor: theme.surfaceAlt,
+      paddingLeft: 32,
+    },
+    subRowLabel: {
+      fontSize: 14,
+      fontWeight: "400",
+      color: theme.textMuted,
+      flex: 1,
+    },
+    subRowRight: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    subRowValue: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.text,
+    },
+    subRowChevron: {
+      fontSize: 18,
+      color: theme.textDim,
+      lineHeight: 20,
+    },
 
-  foot: {
-    height: 16,
-  },
-});
+    foot: {
+      height: 16,
+    },
+  });
+}

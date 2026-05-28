@@ -8,7 +8,9 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useTheme } from "../context/ThemeContext";
 import BottomNav from "../components/BottomNav";
+import EmptyState from "../components/EmptyState";
 
 function getPhase(hour) {
   if (hour >= 6 && hour < 18) return "submit";
@@ -72,6 +74,8 @@ function DevBar({ activePhase, onPress }) {
 }
 
 export default function HomeScreen({ navigation }) {
+  const { theme } = useTheme();
+  const s = makeStyles(theme);
   const [phase, setPhase] = useState(() => getPhase(new Date().getHours()));
   const [devPhase, setDevPhase] = useState(null);
 
@@ -84,7 +88,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.container}>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.statusBar} />
       {/* DEV ONLY — remove before launch */}
       <DevBar
         activePhase={activePhase}
@@ -96,15 +100,16 @@ export default function HomeScreen({ navigation }) {
           }
         }}
       />
-      {activePhase === "submit" && <SubmitView navigation={navigation} />}
-      {activePhase === "vote" && <VoteView />}
-      {activePhase === "results" && <ResultsView navigation={navigation} />}
+      {activePhase === "submit" && <SubmitView navigation={navigation} theme={theme} />}
+      {activePhase === "vote" && <VoteView theme={theme} />}
+      {activePhase === "results" && <ResultsView navigation={navigation} theme={theme} />}
       <BottomNav navigation={navigation} active="home" />
     </SafeAreaView>
   );
 }
 
-function SubmitView({ navigation }) {
+function SubmitView({ navigation, theme }) {
+  const s = makeStyles(theme);
   const [ms, setMs] = useState(() => msUntilHour(18));
 
   useEffect(() => {
@@ -135,7 +140,8 @@ function SubmitView({ navigation }) {
   );
 }
 
-function VoteView() {
+function VoteView({ theme }) {
+  const s = makeStyles(theme);
   const [voted, setVoted] = useState(new Set());
 
   const votesLeft = MAX_VOTES - voted.size;
@@ -168,6 +174,12 @@ function VoteView() {
         </View>
         <Text style={s.phaseSub}>choose your favorites</Text>
       </View>
+      {SUBMISSIONS.length === 0 ? (
+        <EmptyState
+          title="nothing to vote on yet"
+          subtitle={"submissions will appear here once" + "\n" + "the challenge opens"}
+        />
+      ) : (
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.feedPad}
@@ -204,11 +216,14 @@ function VoteView() {
           );
         })}
       </ScrollView>
+      )}
     </View>
   );
 }
 
-function ResultsView({ navigation }) {
+function ResultsView({ navigation, theme }) {
+  const s = makeStyles(theme);
+
   return (
     <View style={s.flexFill}>
       <View style={s.submitBody}>
@@ -229,6 +244,7 @@ function ResultsView({ navigation }) {
   );
 }
 
+// DEV ONLY styles — hardcoded, not themed
 const dev = StyleSheet.create({
   bar: {
     flexDirection: "row",
@@ -272,171 +288,173 @@ const dev = StyleSheet.create({
   },
 });
 
-const s = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  flexFill: {
-    flex: 1,
-  },
-  // Submit state
-  submitBody: {
-    flex: 1,
-    paddingHorizontal: 32,
-    justifyContent: "center",
-  },
-  eyebrow: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 3,
-    textTransform: "uppercase",
-    marginBottom: 16,
-  },
-  challengeTitle: {
-    fontSize: 52,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -2,
-    lineHeight: 56,
-    marginBottom: 48,
-  },
-  timerBlock: {
-    alignItems: "flex-start",
-  },
-  timerTime: {
-    fontSize: 48,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -2,
-  },
-  timerLabel: {
-    fontSize: 11,
-    fontWeight: "400",
-    color: "#888",
-    letterSpacing: 2,
-    marginTop: 6,
-    textTransform: "uppercase",
-  },
-  bottomAction: {
-    paddingHorizontal: 32,
-    paddingBottom: 20,
-  },
-  blackButton: {
-    backgroundColor: "#000",
-    paddingVertical: 16,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  blackButtonText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
-    letterSpacing: 1,
-  },
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.bg,
+    },
+    flexFill: {
+      flex: 1,
+    },
 
-  // Vote state
-  pageHeader: {
-    paddingHorizontal: 32,
-    paddingTop: 32,
-    paddingBottom: 24,
-  },
-  voteHeaderRow: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-  },
-  phaseTitle: {
-    fontSize: 52,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -2,
-  },
-  votePill: {
-    alignItems: "center",
-    paddingBottom: 6,
-  },
-  votePillCount: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -1,
-    lineHeight: 30,
-  },
-  votePillCountEmpty: {
-    color: "#ccc",
-  },
-  votePillLabel: {
-    fontSize: 10,
-    fontWeight: "500",
-    color: "#888",
-    letterSpacing: 2,
-    textTransform: "uppercase",
-  },
-  phaseSub: {
-    fontSize: 13,
-    fontWeight: "400",
-    color: "#888",
-    letterSpacing: 2,
-    marginTop: 6,
-  },
-  feedPad: {
-    paddingHorizontal: 32,
-    paddingBottom: 48,
-  },
-  card: {
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    borderRadius: 6,
-    overflow: "hidden",
-  },
-  cardImage: {
-    height: 200,
-    backgroundColor: "#f2f2f2",
-  },
-  cardRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  cardLabel: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 0.5,
-  },
-  fireButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderWidth: 1.5,
-    borderColor: "#000",
-    borderRadius: 4,
-  },
-  fireButtonVoted: {
-    backgroundColor: "#000",
-    borderColor: "#000",
-  },
-  fireButtonDisabled: {
-    borderColor: "#e0e0e0",
-    backgroundColor: "#fafafa",
-  },
-  fireButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#000",
-  },
-  fireButtonTextVoted: {
-    color: "#fff",
-  },
-  fireButtonTextDisabled: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#bbb",
-    letterSpacing: 0.3,
-  },
+    // Submit / Results state
+    submitBody: {
+      flex: 1,
+      paddingHorizontal: 32,
+      justifyContent: "center",
+    },
+    eyebrow: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 3,
+      textTransform: "uppercase",
+      marginBottom: 16,
+    },
+    challengeTitle: {
+      fontSize: 52,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -2,
+      lineHeight: 56,
+      marginBottom: 48,
+    },
+    timerBlock: {
+      alignItems: "flex-start",
+    },
+    timerTime: {
+      fontSize: 48,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -2,
+    },
+    timerLabel: {
+      fontSize: 11,
+      fontWeight: "400",
+      color: theme.textMuted,
+      letterSpacing: 2,
+      marginTop: 6,
+      textTransform: "uppercase",
+    },
+    bottomAction: {
+      paddingHorizontal: 32,
+      paddingBottom: 20,
+    },
+    blackButton: {
+      backgroundColor: theme.accent,
+      paddingVertical: 16,
+      borderRadius: 6,
+      alignItems: "center",
+    },
+    blackButtonText: {
+      color: theme.accentText,
+      fontSize: 15,
+      fontWeight: "600",
+      letterSpacing: 1,
+    },
 
-});
+    // Vote state
+    pageHeader: {
+      paddingHorizontal: 32,
+      paddingTop: 32,
+      paddingBottom: 24,
+    },
+    voteHeaderRow: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
+    },
+    phaseTitle: {
+      fontSize: 52,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -2,
+    },
+    votePill: {
+      alignItems: "center",
+      paddingBottom: 6,
+    },
+    votePillCount: {
+      fontSize: 28,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -1,
+      lineHeight: 30,
+    },
+    votePillCountEmpty: {
+      color: theme.textDim,
+    },
+    votePillLabel: {
+      fontSize: 10,
+      fontWeight: "500",
+      color: theme.textMuted,
+      letterSpacing: 2,
+      textTransform: "uppercase",
+    },
+    phaseSub: {
+      fontSize: 13,
+      fontWeight: "400",
+      color: theme.textMuted,
+      letterSpacing: 2,
+      marginTop: 6,
+    },
+    feedPad: {
+      paddingHorizontal: 32,
+      paddingBottom: 48,
+    },
+    card: {
+      marginBottom: 24,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 6,
+      overflow: "hidden",
+    },
+    cardImage: {
+      height: 200,
+      backgroundColor: theme.surface,
+    },
+    cardRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    cardLabel: {
+      fontSize: 13,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 0.5,
+    },
+    fireButton: {
+      paddingVertical: 8,
+      paddingHorizontal: 14,
+      borderWidth: 1.5,
+      borderColor: theme.borderStrong,
+      borderRadius: 4,
+    },
+    fireButtonVoted: {
+      backgroundColor: theme.accent,
+      borderColor: theme.accent,
+    },
+    fireButtonDisabled: {
+      borderColor: theme.border,
+      backgroundColor: theme.surfaceAlt,
+    },
+    fireButtonText: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.text,
+    },
+    fireButtonTextVoted: {
+      color: theme.accentText,
+    },
+    fireButtonTextDisabled: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: theme.textDim,
+      letterSpacing: 0.3,
+    },
+  });
+}

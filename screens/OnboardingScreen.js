@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useTheme } from "../context/ThemeContext";
 
 const ADJECTIVES = [
   "Anonymous", "Mystery", "Hidden", "Silent", "Shadow",
@@ -53,6 +54,8 @@ const STEPS = [
 ];
 
 export default function OnboardingScreen({ navigation }) {
+  const { theme } = useTheme();
+  const s = makeStyles(theme);
   const [username, setUsername] = useState(() => randomUsername());
 
   function handleRefresh() {
@@ -65,20 +68,18 @@ export default function OnboardingScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.container}>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.statusBar} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
-        {/* Welcome */}
         <View style={s.welcomeSection}>
           <Text style={s.welcomeEyebrow}>welcome to</Text>
           <Text style={s.welcomeTitle}>slate.</Text>
           <Text style={s.welcomeSub}>a daily anonymous creative competition</Text>
         </View>
 
-        {/* Steps */}
         <View style={s.steps}>
           {STEPS.map((step, i) => (
             <View key={step.num} style={[s.stepCard, i > 0 && s.stepCardGap]}>
@@ -92,7 +93,6 @@ export default function OnboardingScreen({ navigation }) {
           ))}
         </View>
 
-        {/* Username */}
         <View style={s.usernameSection}>
           <Text style={s.usernameEyebrow}>your anonymous identity</Text>
           <View style={s.usernameCard}>
@@ -111,7 +111,6 @@ export default function OnboardingScreen({ navigation }) {
         </View>
       </ScrollView>
 
-      {/* CTA */}
       <View style={s.footer}>
         <TouchableOpacity
           style={s.letsGoButton}
@@ -125,152 +124,152 @@ export default function OnboardingScreen({ navigation }) {
   );
 }
 
-const s = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  scroll: {
-    paddingHorizontal: 32,
-    paddingTop: 32,
-    paddingBottom: 16,
-  },
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.bg,
+    },
+    scroll: {
+      paddingHorizontal: 32,
+      paddingTop: 32,
+      paddingBottom: 16,
+    },
 
-  // Welcome
-  welcomeSection: {
-    marginBottom: 40,
-  },
-  welcomeEyebrow: {
-    fontSize: 14,
-    fontWeight: "400",
-    color: "#888",
-    letterSpacing: 2,
-    marginBottom: 4,
-  },
-  welcomeTitle: {
-    fontSize: 64,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -3,
-    lineHeight: 68,
-    marginBottom: 12,
-  },
-  welcomeSub: {
-    fontSize: 13,
-    fontWeight: "400",
-    color: "#888",
-    letterSpacing: 1.5,
-  },
+    welcomeSection: {
+      marginBottom: 40,
+    },
+    welcomeEyebrow: {
+      fontSize: 14,
+      fontWeight: "400",
+      color: theme.textMuted,
+      letterSpacing: 2,
+      marginBottom: 4,
+    },
+    welcomeTitle: {
+      fontSize: 64,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -3,
+      lineHeight: 68,
+      marginBottom: 12,
+    },
+    welcomeSub: {
+      fontSize: 13,
+      fontWeight: "400",
+      color: theme.textMuted,
+      letterSpacing: 1.5,
+    },
 
-  // Steps
-  steps: {
-    marginBottom: 40,
-  },
-  stepCard: {
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    borderRadius: 6,
-    padding: 20,
-  },
-  stepCardGap: {
-    marginTop: 12,
-  },
-  stepHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  stepNum: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: "#bbb",
-    letterSpacing: 3,
-    textTransform: "uppercase",
-  },
-  stepEmoji: {
-    fontSize: 22,
-  },
-  stepTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#000",
-    letterSpacing: -0.3,
-    lineHeight: 22,
-    marginBottom: 8,
-  },
-  stepBody: {
-    fontSize: 13,
-    fontWeight: "400",
-    color: "#888",
-    lineHeight: 20,
-    letterSpacing: 0.2,
-  },
+    steps: {
+      marginBottom: 40,
+    },
+    stepCard: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 6,
+      padding: 20,
+      backgroundColor: theme.bg,
+    },
+    stepCardGap: {
+      marginTop: 12,
+    },
+    stepHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10,
+    },
+    stepNum: {
+      fontSize: 10,
+      fontWeight: "600",
+      color: theme.textDim,
+      letterSpacing: 3,
+      textTransform: "uppercase",
+    },
+    stepEmoji: {
+      fontSize: 22,
+    },
+    stepTitle: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: theme.text,
+      letterSpacing: -0.3,
+      lineHeight: 22,
+      marginBottom: 8,
+    },
+    stepBody: {
+      fontSize: 13,
+      fontWeight: "400",
+      color: theme.textMuted,
+      lineHeight: 20,
+      letterSpacing: 0.2,
+    },
 
-  // Username
-  usernameSection: {
-    marginBottom: 8,
-  },
-  usernameEyebrow: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 3,
-    textTransform: "uppercase",
-    marginBottom: 10,
-  },
-  usernameCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderWidth: 1.5,
-    borderColor: "#000",
-    borderRadius: 6,
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-    marginBottom: 10,
-  },
-  usernameText: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#000",
-    letterSpacing: -0.5,
-  },
-  refreshBtn: {
-    padding: 4,
-  },
-  refreshIcon: {
-    fontSize: 24,
-    color: "#000",
-    lineHeight: 26,
-  },
-  usernameHint: {
-    fontSize: 12,
-    fontWeight: "400",
-    color: "#aaa",
-    letterSpacing: 0.3,
-    lineHeight: 18,
-  },
+    usernameSection: {
+      marginBottom: 8,
+    },
+    usernameEyebrow: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 3,
+      textTransform: "uppercase",
+      marginBottom: 10,
+    },
+    usernameCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderWidth: 1.5,
+      borderColor: theme.borderStrong,
+      borderRadius: 6,
+      paddingHorizontal: 18,
+      paddingVertical: 16,
+      marginBottom: 10,
+      backgroundColor: theme.bg,
+    },
+    usernameText: {
+      fontSize: 20,
+      fontWeight: "800",
+      color: theme.text,
+      letterSpacing: -0.5,
+    },
+    refreshBtn: {
+      padding: 4,
+    },
+    refreshIcon: {
+      fontSize: 24,
+      color: theme.text,
+      lineHeight: 26,
+    },
+    usernameHint: {
+      fontSize: 12,
+      fontWeight: "400",
+      color: theme.textDim,
+      letterSpacing: 0.3,
+      lineHeight: 18,
+    },
 
-  // Footer
-  footer: {
-    paddingHorizontal: 32,
-    paddingBottom: 32,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-    backgroundColor: "#fff",
-  },
-  letsGoButton: {
-    backgroundColor: "#000",
-    paddingVertical: 16,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  letsGoText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
-    letterSpacing: 1,
-  },
-});
+    footer: {
+      paddingHorizontal: 32,
+      paddingBottom: 32,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: theme.divider,
+      backgroundColor: theme.bg,
+    },
+    letsGoButton: {
+      backgroundColor: theme.accent,
+      paddingVertical: 16,
+      borderRadius: 6,
+      alignItems: "center",
+    },
+    letsGoText: {
+      color: theme.accentText,
+      fontSize: 15,
+      fontWeight: "600",
+      letterSpacing: 1,
+    },
+  });
+}
