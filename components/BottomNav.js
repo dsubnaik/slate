@@ -1,6 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 
 export default function BottomNav({ navigation, active }) {
+  const { theme } = useTheme();
+  const s = makeStyles(theme);
+
   return (
     <View style={s.container}>
       <TouchableOpacity
@@ -35,47 +39,50 @@ export default function BottomNav({ navigation, active }) {
   );
 }
 
-const s = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    borderTopWidth: 1,
-    borderTopColor: "#e8e8e8",
-    paddingTop: 12,
-    paddingBottom: 10,
-    paddingHorizontal: 16,
-  },
-  item: {
-    flex: 1,
-    alignItems: "center",
-    gap: 5,
-  },
-  emoji: {
-    fontSize: 24,
-  },
-  dim: {
-    opacity: 0.3,
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#000",
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "#000",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarDim: {
-    backgroundColor: "#ccc",
-  },
-  avatarText: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#fff",
-    letterSpacing: 0.5,
-  },
-});
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
+      paddingTop: 12,
+      paddingBottom: 10,
+      paddingHorizontal: 16,
+      backgroundColor: theme.bg,
+    },
+    item: {
+      flex: 1,
+      alignItems: "center",
+      gap: 5,
+    },
+    emoji: {
+      fontSize: 24,
+    },
+    dim: {
+      opacity: 0.3,
+    },
+    dot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: theme.text,
+    },
+    avatar: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      backgroundColor: theme.accent,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    avatarDim: {
+      backgroundColor: theme.avatarInactive,
+    },
+    avatarText: {
+      fontSize: 11,
+      fontWeight: "700",
+      color: theme.accentText,
+      letterSpacing: 0.5,
+    },
+  });
+}

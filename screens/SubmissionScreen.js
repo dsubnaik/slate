@@ -13,11 +13,15 @@ import {
 import { StatusBar } from "expo-status-bar";
 import Svg, { Path } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
+import { useTheme } from "../context/ThemeContext";
 import BottomNav from "../components/BottomNav";
 
 const CHALLENGE_TITLE = "Urban Isolation";
 
 export default function SubmissionScreen({ navigation }) {
+  const { theme } = useTheme();
+  const s = makeStyles(theme);
+
   const [type, setType] = useState("draw");
   const [strokes, setStrokes] = useState([]);
   const [liveSegment, setLiveSegment] = useState("");
@@ -87,10 +91,6 @@ export default function SubmissionScreen({ navigation }) {
     ]);
   }
 
-  function handleTypeChange(newType) {
-    setType(newType);
-  }
-
   function handleClearDraw() {
     setStrokes([]);
     setLiveSegment("");
@@ -105,7 +105,7 @@ export default function SubmissionScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.container}>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.statusBar} />
 
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
@@ -124,7 +124,7 @@ export default function SubmissionScreen({ navigation }) {
             key={t}
             style={[s.typeBtn, type === t && s.typeBtnActive]}
             activeOpacity={0.7}
-            onPress={() => handleTypeChange(t)}
+            onPress={() => setType(t)}
           >
             <Text style={[s.typeBtnText, type === t && s.typeBtnTextActive]}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -141,7 +141,7 @@ export default function SubmissionScreen({ navigation }) {
                 <Path
                   key={i}
                   d={path}
-                  stroke="#000"
+                  stroke={theme.text}
                   strokeWidth={3}
                   fill="none"
                   strokeLinecap="round"
@@ -151,7 +151,7 @@ export default function SubmissionScreen({ navigation }) {
               {liveSegment ? (
                 <Path
                   d={liveSegment}
-                  stroke="#000"
+                  stroke={theme.text}
                   strokeWidth={3}
                   fill="none"
                   strokeLinecap="round"
@@ -194,7 +194,7 @@ export default function SubmissionScreen({ navigation }) {
               style={s.textInput}
               multiline
               placeholder="write something..."
-              placeholderTextColor="#bbb"
+              placeholderTextColor={theme.placeholder}
               value={text}
               onChangeText={setText}
               textAlignVertical="top"
@@ -220,132 +220,135 @@ export default function SubmissionScreen({ navigation }) {
   );
 }
 
-const s = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    paddingHorizontal: 32,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  backButton: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 0.5,
-  },
-  titleSection: {
-    paddingHorizontal: 32,
-    paddingBottom: 20,
-  },
-  eyebrow: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 3,
-    textTransform: "uppercase",
-    marginBottom: 8,
-  },
-  challengeTitle: {
-    fontSize: 36,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -1.5,
-  },
-  typeSelector: {
-    flexDirection: "row",
-    paddingHorizontal: 32,
-    gap: 8,
-    marginBottom: 16,
-  },
-  typeBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: "#000",
-    alignItems: "center",
-  },
-  typeBtnActive: {
-    backgroundColor: "#000",
-  },
-  typeBtnText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#000",
-    letterSpacing: 0.5,
-  },
-  typeBtnTextActive: {
-    color: "#fff",
-  },
-  previewWrapper: {
-    flex: 1,
-    paddingHorizontal: 32,
-  },
-  previewArea: {
-    flex: 1,
-    borderWidth: 1.5,
-    borderColor: "#000",
-    borderRadius: 6,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-  },
-  hint: {
-    fontSize: 13,
-    fontWeight: "400",
-    color: "#bbb",
-    letterSpacing: 2,
-  },
-  clearBtn: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 4,
-  },
-  clearBtnText: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#000",
-    letterSpacing: 1,
-  },
-  textInput: {
-    flex: 1,
-    padding: 16,
-    fontSize: 16,
-    fontWeight: "400",
-    color: "#000",
-    lineHeight: 24,
-    width: "100%",
-  },
-  bottomAction: {
-    paddingHorizontal: 32,
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  submitButton: {
-    backgroundColor: "#000",
-    paddingVertical: 16,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  submitButtonDisabled: {
-    backgroundColor: "#e8e8e8",
-  },
-  submitButtonText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
-    letterSpacing: 1,
-  },
-  submitButtonTextDisabled: {
-    color: "#aaa",
-  },
-});
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.bg,
+    },
+    header: {
+      paddingHorizontal: 32,
+      paddingTop: 16,
+      paddingBottom: 8,
+    },
+    backButton: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 0.5,
+    },
+    titleSection: {
+      paddingHorizontal: 32,
+      paddingBottom: 20,
+    },
+    eyebrow: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 3,
+      textTransform: "uppercase",
+      marginBottom: 8,
+    },
+    challengeTitle: {
+      fontSize: 36,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -1.5,
+    },
+    typeSelector: {
+      flexDirection: "row",
+      paddingHorizontal: 32,
+      gap: 8,
+      marginBottom: 16,
+    },
+    typeBtn: {
+      flex: 1,
+      paddingVertical: 10,
+      borderRadius: 6,
+      borderWidth: 1.5,
+      borderColor: theme.borderStrong,
+      alignItems: "center",
+    },
+    typeBtnActive: {
+      backgroundColor: theme.accent,
+    },
+    typeBtnText: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: theme.text,
+      letterSpacing: 0.5,
+    },
+    typeBtnTextActive: {
+      color: theme.accentText,
+    },
+    previewWrapper: {
+      flex: 1,
+      paddingHorizontal: 32,
+    },
+    previewArea: {
+      flex: 1,
+      borderWidth: 1.5,
+      borderColor: theme.borderStrong,
+      borderRadius: 6,
+      overflow: "hidden",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.bg,
+    },
+    hint: {
+      fontSize: 13,
+      fontWeight: "400",
+      color: theme.textDim,
+      letterSpacing: 2,
+    },
+    clearBtn: {
+      position: "absolute",
+      top: 12,
+      right: 12,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderWidth: 1,
+      borderColor: theme.text,
+      borderRadius: 4,
+    },
+    clearBtnText: {
+      fontSize: 11,
+      fontWeight: "600",
+      color: theme.text,
+      letterSpacing: 1,
+    },
+    textInput: {
+      flex: 1,
+      padding: 16,
+      fontSize: 16,
+      fontWeight: "400",
+      color: theme.text,
+      lineHeight: 24,
+      width: "100%",
+      backgroundColor: theme.bg,
+    },
+    bottomAction: {
+      paddingHorizontal: 32,
+      paddingTop: 16,
+      paddingBottom: 16,
+    },
+    submitButton: {
+      backgroundColor: theme.accent,
+      paddingVertical: 16,
+      borderRadius: 6,
+      alignItems: "center",
+    },
+    submitButtonDisabled: {
+      backgroundColor: theme.surface,
+    },
+    submitButtonText: {
+      color: theme.accentText,
+      fontSize: 15,
+      fontWeight: "600",
+      letterSpacing: 1,
+    },
+    submitButtonTextDisabled: {
+      color: theme.textMuted,
+    },
+  });
+}

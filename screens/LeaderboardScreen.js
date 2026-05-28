@@ -8,7 +8,9 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useTheme } from "../context/ThemeContext";
 import BottomNav from "../components/BottomNav";
+import EmptyState from "../components/EmptyState";
 
 const TABS = ["This Week", "All Time"];
 
@@ -41,13 +43,15 @@ const ALL_TIME = [
 ];
 
 export default function LeaderboardScreen({ navigation }) {
+  const { theme } = useTheme();
+  const s = makeStyles(theme);
   const [activeTab, setActiveTab] = useState(0);
 
   const data = activeTab === 0 ? THIS_WEEK : ALL_TIME;
 
   return (
     <SafeAreaView style={s.container}>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.statusBar} />
 
       <View style={s.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
@@ -59,7 +63,6 @@ export default function LeaderboardScreen({ navigation }) {
         <Text style={s.pageTitle}>leaderboard.</Text>
       </View>
 
-      {/* Tabs */}
       <View style={s.tabs}>
         {TABS.map((label, i) => (
           <TouchableOpacity
@@ -75,7 +78,6 @@ export default function LeaderboardScreen({ navigation }) {
         ))}
       </View>
 
-      {/* Column headers */}
       <View style={s.colHeader}>
         <View style={s.colHeaderLeft} />
         <Text style={s.colHeaderLabel}>WINS</Text>
@@ -83,12 +85,16 @@ export default function LeaderboardScreen({ navigation }) {
       </View>
 
       <ScrollView style={s.list} showsVerticalScrollIndicator={false}>
-        {data.map((item) => (
+        {data.length === 0 ? (
+          <EmptyState
+            title="no rankings yet"
+            subtitle={"compete daily to appear" + "\n" + "on the leaderboard"}
+          />
+        ) : data.map((item) => (
           <View
             key={item.rank}
             style={[s.row, item.isMe && s.rowHighlight]}
           >
-            {/* Rank / Medal */}
             <View style={s.rankCell}>
               {MEDAL[item.rank] ? (
                 <Text style={s.medal}>{MEDAL[item.rank]}</Text>
@@ -97,7 +103,6 @@ export default function LeaderboardScreen({ navigation }) {
               )}
             </View>
 
-            {/* Name */}
             <View style={s.nameCell}>
               <Text style={[s.name, item.isMe && s.nameMe]} numberOfLines={1}>
                 {item.name}
@@ -109,169 +114,165 @@ export default function LeaderboardScreen({ navigation }) {
               )}
             </View>
 
-            {/* Wins */}
             <Text style={[s.statNum, item.isMe && s.statNumMe]}>{item.wins}</Text>
-
-            {/* Votes */}
             <Text style={[s.statNum, s.statVotes, item.isMe && s.statNumMe]}>
               {item.votes}
             </Text>
           </View>
         ))}
-        <View style={s.listFoot} />
+        {data.length > 0 && <View style={s.listFoot} />}
       </ScrollView>
       <BottomNav navigation={navigation} active="leaderboard" />
     </SafeAreaView>
   );
 }
 
-const s = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  topBar: {
-    paddingHorizontal: 32,
-    paddingTop: 16,
-    paddingBottom: 4,
-  },
-  backButton: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 0.5,
-  },
-  titleSection: {
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  pageTitle: {
-    fontSize: 48,
-    fontWeight: "900",
-    color: "#000",
-    letterSpacing: -2,
-  },
+function makeStyles(theme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.bg,
+    },
+    topBar: {
+      paddingHorizontal: 32,
+      paddingTop: 16,
+      paddingBottom: 4,
+    },
+    backButton: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 0.5,
+    },
+    titleSection: {
+      paddingHorizontal: 32,
+      paddingTop: 10,
+      paddingBottom: 20,
+    },
+    pageTitle: {
+      fontSize: 48,
+      fontWeight: "900",
+      color: theme.text,
+      letterSpacing: -2,
+    },
 
-  // Tabs
-  tabs: {
-    flexDirection: "row",
-    marginHorizontal: 32,
-    marginBottom: 20,
-    gap: 8,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: "#000",
-    alignItems: "center",
-  },
-  tabActive: {
-    backgroundColor: "#000",
-  },
-  tabText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#000",
-    letterSpacing: 0.5,
-  },
-  tabTextActive: {
-    color: "#fff",
-  },
+    tabs: {
+      flexDirection: "row",
+      marginHorizontal: 32,
+      marginBottom: 20,
+      gap: 8,
+    },
+    tab: {
+      flex: 1,
+      paddingVertical: 10,
+      borderRadius: 6,
+      borderWidth: 1.5,
+      borderColor: theme.borderStrong,
+      alignItems: "center",
+    },
+    tabActive: {
+      backgroundColor: theme.accent,
+    },
+    tabText: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: theme.text,
+      letterSpacing: 0.5,
+    },
+    tabTextActive: {
+      color: theme.accentText,
+    },
 
-  // Column headers
-  colHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 32,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e8e8e8",
-  },
-  colHeaderLeft: {
-    flex: 1,
-  },
-  colHeaderLabel: {
-    width: 52,
-    fontSize: 9,
-    fontWeight: "600",
-    color: "#aaa",
-    letterSpacing: 2,
-    textAlign: "right",
-  },
+    colHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 32,
+      paddingBottom: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    colHeaderLeft: {
+      flex: 1,
+    },
+    colHeaderLabel: {
+      width: 52,
+      fontSize: 9,
+      fontWeight: "600",
+      color: theme.textDim,
+      letterSpacing: 2,
+      textAlign: "right",
+    },
 
-  // Rows
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 32,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  rowHighlight: {
-    backgroundColor: "#f5f5f5",
-  },
-  rankCell: {
-    width: 36,
-  },
-  medal: {
-    fontSize: 20,
-  },
-  rankNum: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#000",
-  },
-  nameCell: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingRight: 8,
-  },
-  name: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-    letterSpacing: 0.1,
-    flexShrink: 1,
-  },
-  nameMe: {
-    fontWeight: "700",
-  },
-  youBadge: {
-    backgroundColor: "#000",
-    borderRadius: 3,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  youBadgeText: {
-    fontSize: 9,
-    fontWeight: "700",
-    color: "#fff",
-    letterSpacing: 1,
-  },
-  statNum: {
-    width: 52,
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#000",
-    textAlign: "right",
-  },
-  statVotes: {
-    color: "#888",
-  },
-  statNumMe: {
-    fontWeight: "700",
-    color: "#000",
-  },
-  list: {
-    flex: 1,
-  },
-  listFoot: {
-    height: 48,
-  },
-});
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 32,
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.divider,
+    },
+    rowHighlight: {
+      backgroundColor: theme.surface,
+    },
+    rankCell: {
+      width: 36,
+    },
+    medal: {
+      fontSize: 20,
+    },
+    rankNum: {
+      fontSize: 14,
+      fontWeight: "700",
+      color: theme.text,
+    },
+    nameCell: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      paddingRight: 8,
+    },
+    name: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.text,
+      letterSpacing: 0.1,
+      flexShrink: 1,
+    },
+    nameMe: {
+      fontWeight: "700",
+    },
+    youBadge: {
+      backgroundColor: theme.accent,
+      borderRadius: 3,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+    },
+    youBadgeText: {
+      fontSize: 9,
+      fontWeight: "700",
+      color: theme.accentText,
+      letterSpacing: 1,
+    },
+    statNum: {
+      width: 52,
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.text,
+      textAlign: "right",
+    },
+    statVotes: {
+      color: theme.textMuted,
+    },
+    statNumMe: {
+      fontWeight: "700",
+      color: theme.text,
+    },
+    list: {
+      flex: 1,
+    },
+    listFoot: {
+      height: 48,
+    },
+  });
+}
