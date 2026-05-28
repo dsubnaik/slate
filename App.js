@@ -1,21 +1,23 @@
-/*
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "./screens/SplashScreen";
-
-export default function App() {
-  return <SplashScreen />;
-}
-*/
-
 import LandingScreen from "./screens/LandingScreen";
+import HomeScreen from "./screens/HomeScreen";
+import SubmissionScreen from "./screens/SubmissionScreen";
+import ResultsScreen from "./screens/ResultsScreen";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  return <LandingScreen />;
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen name="Landing" component={LandingScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Submission" component={SubmissionScreen} />
+        <Stack.Screen name="Results" component={ResultsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
-
-/*
-import HomeScreen from './screens/HomeScreen';
-
-export default function App() {
-  return <HomeScreen />;
-}
-*/
