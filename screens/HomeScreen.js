@@ -95,6 +95,15 @@ export default function HomeScreen({ navigation }) {
           }
         }}
       />
+      <View style={s.navbar}>
+        <TouchableOpacity
+          style={s.profileBtn}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate("Profile")}
+        >
+          <Text style={s.profileBtnText}>HB</Text>
+        </TouchableOpacity>
+      </View>
       {activePhase === "submit" && <SubmitView navigation={navigation} />}
       {activePhase === "vote" && <VoteView />}
       {activePhase === "results" && <ResultsView navigation={navigation} />}
@@ -278,6 +287,26 @@ const s = StyleSheet.create({
   },
   flexFill: {
     flex: 1,
+  },
+  navbar: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    paddingHorizontal: 32,
+    paddingVertical: 10,
+  },
+  profileBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileBtnText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#fff",
+    letterSpacing: 0.5,
   },
 
   // Submit state
