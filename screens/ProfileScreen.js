@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import BottomNav from "../components/BottomNav";
 
 const USERNAME = "Hidden Bear";
 
@@ -40,12 +41,13 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
           <Text style={s.backButton}>← back</Text>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate("Settings")}>
           <Text style={s.gearIcon}>⚙</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView
+        style={s.scrollFlex}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={s.scroll}
       >
@@ -84,6 +86,7 @@ export default function ProfileScreen({ navigation }) {
           ))}
         </View>
       </ScrollView>
+      <BottomNav navigation={navigation} active="profile" />
     </SafeAreaView>
   );
 }
@@ -111,10 +114,13 @@ const s = StyleSheet.create({
     fontSize: 22,
     color: "#000",
   },
+  scrollFlex: {
+    flex: 1,
+  },
   scroll: {
     paddingHorizontal: 32,
     paddingTop: 20,
-    paddingBottom: 56,
+    paddingBottom: 32,
   },
 
   // Identity

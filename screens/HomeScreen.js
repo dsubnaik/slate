@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import BottomNav from "../components/BottomNav";
 
 function getPhase(hour) {
   if (hour >= 6 && hour < 18) return "submit";
@@ -95,18 +96,10 @@ export default function HomeScreen({ navigation }) {
           }
         }}
       />
-      <View style={s.navbar}>
-        <TouchableOpacity
-          style={s.profileBtn}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate("Profile")}
-        >
-          <Text style={s.profileBtnText}>HB</Text>
-        </TouchableOpacity>
-      </View>
       {activePhase === "submit" && <SubmitView navigation={navigation} />}
       {activePhase === "vote" && <VoteView />}
       {activePhase === "results" && <ResultsView navigation={navigation} />}
+      <BottomNav navigation={navigation} active="home" />
     </SafeAreaView>
   );
 }
@@ -288,27 +281,6 @@ const s = StyleSheet.create({
   flexFill: {
     flex: 1,
   },
-  navbar: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    paddingHorizontal: 32,
-    paddingVertical: 10,
-  },
-  profileBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#000",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  profileBtnText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#fff",
-    letterSpacing: 0.5,
-  },
-
   // Submit state
   submitBody: {
     flex: 1,
@@ -350,7 +322,7 @@ const s = StyleSheet.create({
   },
   bottomAction: {
     paddingHorizontal: 32,
-    paddingBottom: 48,
+    paddingBottom: 20,
   },
   blackButton: {
     backgroundColor: "#000",

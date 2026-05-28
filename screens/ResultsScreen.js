@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import BottomNav from "../components/BottomNav";
 
 const WINNER = { name: "Hidden Bear", votes: 42 };
 
@@ -54,8 +55,9 @@ export default function ResultsScreen({ navigation }) {
       </View>
 
       <ScrollView
+        style={s.scroll}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={s.scroll}
+        contentContainerStyle={s.scrollContent}
       >
         {/* Title */}
         <Text style={s.eyebrow}>today's challenge — Urban Isolation</Text>
@@ -94,6 +96,7 @@ export default function ResultsScreen({ navigation }) {
           <Text style={s.viewAllText}>View All Submissions</Text>
         </TouchableOpacity>
       </ScrollView>
+      <BottomNav navigation={navigation} active="home" />
     </SafeAreaView>
   );
 }
@@ -115,9 +118,12 @@ const s = StyleSheet.create({
     letterSpacing: 0.5,
   },
   scroll: {
+    flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 32,
     paddingTop: 12,
-    paddingBottom: 56,
+    paddingBottom: 32,
   },
 
   // Title

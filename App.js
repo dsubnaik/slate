@@ -6,6 +6,8 @@ import HomeScreen from "./screens/HomeScreen";
 import SubmissionScreen from "./screens/SubmissionScreen";
 import ResultsScreen from "./screens/ResultsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import LeaderboardScreen from "./screens/LeaderboardScreen";
+import SettingsScreen from "./screens/SettingsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +21,8 @@ export default function App() {
         <Stack.Screen name="Submission" component={SubmissionScreen} />
         <Stack.Screen name="Results" component={ResultsScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -13,6 +13,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import Svg, { Path } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
+import BottomNav from "../components/BottomNav";
 
 const CHALLENGE_TITLE = "Urban Isolation";
 
@@ -214,6 +215,7 @@ export default function SubmissionScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
+      <BottomNav navigation={navigation} active="home" />
     </SafeAreaView>
   );
 }
@@ -326,7 +328,7 @@ const s = StyleSheet.create({
   bottomAction: {
     paddingHorizontal: 32,
     paddingTop: 16,
-    paddingBottom: 48,
+    paddingBottom: 16,
   },
   submitButton: {
     backgroundColor: "#000",
